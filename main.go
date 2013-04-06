@@ -34,14 +34,14 @@ func main() {
 	// read from the connection and pipe it to the correct channel
 	buffer := make([]byte, 100)
 	for {
-		_, readError := conn.Read(buffer)
+		n, readError := conn.Read(buffer)
 		if readError != nil {
 			log.Fatal(readError)
 		}
 		defer c.Close()
-		met, parseError := parse(string(buffer))
+		met, parseError := parse(string(buffer[:n]))
 		if parseError != nil {
-			log.Println("Error parsing a metric")
+			log.Println(parseError)
 			parseErrors = parseErrors + 1
 		} else {
 			key := met.GetKey()
@@ -67,13 +67,23 @@ func spinUp() {
 // parse the data in form key|value
 func parse(s string) (Metric, error) {
 	data := strings.Split(s, "|")
-	in, er := strconv.ParseFloat(data[1], 32)
+	// trim the newline off the end of the value
+	data[1] = strings.TrimSpace(data[1])
+	fl, er := strconv.ParseFloat(data[1], 32)
 	if er == nil {
 		c := new(Counter)
 		c.SetKey(data[0])
-		c.SetValue(in)
+		c.SetValue(fl)
 		return c, nil
 	}
+	/* in, intError := strconv.ParseInt(data[1],10,32)
+	if intError == nil {
+		c := new(Counter)
+		c.SetKey(data[0])
+		c.SetValue(float64(in))
+		log.Println(in)
+		return c, nil
+	} */
 	ti, err := time.Parse(time.RFC1123Z, data[1])
 	if err == nil {
 		t := new(TimeSeries)
