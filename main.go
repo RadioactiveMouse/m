@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 	"errors"
+	"io"
 )
 
 var (
@@ -27,18 +28,27 @@ func main() {
 		log.Fatal("Couldn't open a connection to accept Metrics")
 	}
 	spinUp()
-	conn, er := c.Accept()
-	if er != nil {
-		log.Fatal("Couldn't accept a connection")
+	for {
+		conn, er := c.Accept()
+		if er != nil {
+			log.Fatal("Couldn't accept a connection")
+		}
+		// read from the connection and pipe it to the correct channel
+		go connection(conn)
 	}
-	// read from the connection and pipe it to the correct channel
+}
+
+func connection(conn net.Conn) {
 	buffer := make([]byte, 100)
 	for {
 		n, readError := conn.Read(buffer)
 		if readError != nil {
+			if readError == io.EOF {
+				return
+			}
 			log.Fatal(readError)
 		}
-		defer c.Close()
+		defer conn.Close()
 		met, parseError := parse(string(buffer[:n]))
 		if parseError != nil {
 			log.Println(parseError)
@@ -57,6 +67,7 @@ func main() {
 			}
 		}
 	}
+
 }
 
 // look in the directory and start any old metric servers

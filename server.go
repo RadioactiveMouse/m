@@ -36,7 +36,6 @@ func NewMetricServer(name string, interval int) *Server {
 	// check to make sure the data directory exists and if not create it
 	dirErr := os.Mkdir("data",0700)
 	if dirErr != nil && !os.IsExist(dirErr) {
-		log.Println(dirErr)
 		log.Fatal("Error making the directory to store the metrics")
 	}
 	go s.Run()
@@ -46,7 +45,7 @@ func NewMetricServer(name string, interval int) *Server {
 // run the server to listen for data across the channel
 func (s *Server) Run() {
 	defer s.Close()
-	timer := time.Tick(60 * time.Second)
+	timer := time.Tick(30 * time.Second)
 	for {
 		select {
 		case data := <-s.ch:
