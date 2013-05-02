@@ -13,7 +13,6 @@ import (
 
 var (
 	port   = flag.Int("port", 2013, "port to host the m server on")
-	config = flag.Bool("config", false, "switch on/off debugging information")
 	buf    = make(map[string]chan Metric)
 	parseErrors = 0
 )

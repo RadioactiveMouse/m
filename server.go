@@ -97,7 +97,7 @@ func (s *Server) Flush() {
 
 // function to ensure correct and proper cleanup
 func (s *Server) Close() {
-	defer log.Printf("Metric server %s closed\n", s.name)
+	defer log.Printf("Metric server [%s] closed\n", s.name)
 	close(s.ch)
 	close(s.close)
 }
