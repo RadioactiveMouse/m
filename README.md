@@ -4,7 +4,7 @@ Metrics server designed to make storing metrics easy. Simple set up graphite-lik
 
 ## Status
 
-Tool is not ready to be used in any capacity. Tool currently only does logging sent across the connection. No query functionality or loading of previously handled metrics is currently supported.
+Tool is designed for use with Riak as a backend. This is due to the fact the author is currently developing the Go Riak client (rgo). The idea is to make the backend plugable but this will not be the focus of the first release.
 
 ## Usage
 
@@ -13,7 +13,7 @@ Run the tool using `./m`
 Flags : 
 
 	-interval	:	interval for the servers to use
-	-type		:	allow for clustered usage
+	-port		:	signal which port you want to listen on
 
 ## License
 
