@@ -55,7 +55,7 @@ func (s *Server) Run() {
 	for {
 		select {
 		case data := <-s.ch:
-			s.buf := append(s.buf, data)
+			s.buf = append(s.buf, data)
 			s.log("Metric written to buffer")
 		case <-timer:
 			go s.Flush()
